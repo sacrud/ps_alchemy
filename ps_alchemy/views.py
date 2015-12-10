@@ -5,7 +5,7 @@ import deform
 import peppercorn
 import transaction
 from pyramid.view import view_config
-from sacrud.common import pk_to_list, pk_list_to_dict, get_attrname_by_colname
+from sacrud.common import pk_list_to_dict
 from pyramid.compat import escape
 from pyramid_sacrud import PYRAMID_SACRUD_VIEW
 from pyramid.renderers import render_to_response
@@ -69,10 +69,7 @@ class CRUD(object):
         except ValueError:
             raise HTTPNotFound
         params = {
-            'hasattr': hasattr,
-            'paginator': SqlalchemyOrmPage(rows, **paginator_attr),
-            'pk_to_list': pk_to_list,
-            'get_attrname_by_colname': get_attrname_by_colname
+            'paginator': SqlalchemyOrmPage(rows, **paginator_attr)
         }
         return render_to_response(
             self.context.renderer, params, request=self.request

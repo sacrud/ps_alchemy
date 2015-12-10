@@ -14,7 +14,7 @@ from zope.sqlalchemy import ZopeTransactionExtension
 
 import sqlalchemy
 from sacrud.action import CRUD
-from sacrud.common import pk_to_list, pk_list_to_dict
+from sacrud.common import pk_to_list, pk_list_to_dict, get_attrname_by_colname
 from sacrud_deform import SacrudForm
 from sqlalchemy.orm import sessionmaker, scoped_session
 from pyramid.location import lineage
@@ -34,6 +34,42 @@ class BaseResource(object):
         self.parent = parent
         self._dbsession = dbsession
         self.__name__ = name or self.__name__
+
+    @property
+    def table_name(self):
+        return self.table.__tablename__
+
+    @property
+    def verbose_name(self):
+        return getattr(self.table, 'verbose_name', self.table_name)
+
+    @property
+    def visible_columns(self):
+        columns = getattr(self.table, 'sacrud_list_col',
+                          self.table.__table__.c)
+
+        class Column(object):
+            def __init__(self, column):
+                self.column = column
+
+            def value(self, row):
+                # if col.__class__.__name__
+                # in ['Column', 'InstrumentedAttribute']
+                return getattr(
+                    row,
+                    get_attrname_by_colname(row, self.column.name)
+                )
+
+            @property
+            def name(self):
+                return getattr(self.column.info, 'verbose_name',
+                               self.column.name)
+
+        return (Column(col) for col in columns)
+
+    @classmethod
+    def get_pk(cls, obj, json=True):
+        return pk_to_list(obj, json)
 
     @property
     def __parent__(self):
@@ -102,7 +138,7 @@ class ListResource(BaseResource):
 
     title = 'Alchemy view'
     items_per_page = 5
-    renderer = '/ps_alchemy/list.jinja2'
+    renderer = '/ps_alchemy/crud/list.jinja2'
 
     def __init__(self, table, parent=None, dbsession=None):
         self.__name__ = table.__tablename__
@@ -127,7 +163,7 @@ class CreateResource(BaseResource):
     _form = None
     title = 'Alchemy create'
     __name__ = 'create'
-    renderer = '/ps_alchemy/create.jinja2'
+    renderer = '/ps_alchemy/crud/create.jinja2'
 
     @property
     def obj(self):
