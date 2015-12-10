@@ -15,6 +15,7 @@
 {% endblock %}
 
 {% block body %}
+  <div id="grid_view"></div>
   {% if hasattr(table, 'sacrud_list_col') %}
     {% set visible_columns=table.sacrud_list_col %}
   {% else %}
@@ -29,7 +30,7 @@
       <i class="material-icons left">add_circle_outline</i>
       {{ _ps('Create') }}
     </a>
-    <a class="delete-button waves-effect waves-light btn red">
+    <a class="delete-button waves-effect waves-light btn disabled">
       <i class="material-icons left">remove_circle_outline</i>
       {{ _ps('Delete') }}
     </a>
