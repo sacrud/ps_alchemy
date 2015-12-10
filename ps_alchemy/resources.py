@@ -9,7 +9,6 @@
 """
 Provide SQLAlchemy resource for pyramid_sacrud.
 """
-# from zope.interface import implementer
 from zope.sqlalchemy import ZopeTransactionExtension
 
 import sqlalchemy
@@ -19,7 +18,6 @@ from sacrud_deform import SacrudForm
 from sqlalchemy.orm import sessionmaker, scoped_session
 from pyramid.location import lineage
 from pyramid.threadlocal import get_current_registry
-# from pyramid_sacrud.interfaces import ISacrudResource
 
 
 class BaseResource(object):
@@ -53,8 +51,6 @@ class BaseResource(object):
                 self.column = column
 
             def value(self, row):
-                # if col.__class__.__name__
-                # in ['Column', 'InstrumentedAttribute']
                 return getattr(
                     row,
                     get_attrname_by_colname(row, self.column.name)

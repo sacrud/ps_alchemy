@@ -5,6 +5,7 @@
 # Copyright © 2015 uralbash <root@uralbash.ru>
 #
 # Distributed under terms of the MIT license.
+from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from pyramid.events import ApplicationCreated
 from pyramid_sacrud import CONFIG_MODELS
 from pyramid_sacrud.resources import GroupResource
@@ -19,7 +20,9 @@ def models_preparing(app):
     models = settings[CONFIG_MODELS]
 
     def wrapper(resource, parent):
-        return ListResource(resource, parent=parent)
+        if isinstance(resource, DeclarativeMeta):
+            return ListResource(resource, parent=parent)
+        return resource
 
     models = [(k, [wrapper(r, GroupResource(k, v)) for r in v])
               for k, v in models]

@@ -62,10 +62,11 @@ class CRUD(object):
         permission=PYRAMID_SACRUD_VIEW
     )
     def list_view(self):
-        items_per_page = getattr(self.context, 'items_per_page', 10)
         rows = self.context.crud.read()
         try:
-            paginator_attr = get_paginator(self.request, items_per_page - 1)
+            paginator_attr = get_paginator(
+                self.request, self.context.items_per_page - 1
+            )
         except ValueError:
             raise HTTPNotFound
         params = {
