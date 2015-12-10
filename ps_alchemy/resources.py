@@ -9,6 +9,7 @@
 """
 Provide SQLAlchemy resource for pyramid_sacrud.
 """
+from zope.interface import implementer
 from zope.sqlalchemy import ZopeTransactionExtension
 
 import sqlalchemy
@@ -18,6 +19,7 @@ from sacrud_deform import SacrudForm
 from sqlalchemy.orm import sessionmaker, scoped_session
 from pyramid.location import lineage
 from pyramid.threadlocal import get_current_registry
+from pyramid_sacrud.interfaces import ISacrudResource
 
 
 class BaseResource(object):
@@ -31,7 +33,7 @@ class BaseResource(object):
         self.kwargs = kwargs
         self.parent = parent
         self._dbsession = dbsession
-        self.__name__ = name or self.__name__
+        self.__name__ = name or getattr(self, '__name__', None)
 
     @property
     def table_name(self):
@@ -130,6 +132,7 @@ class BaseResource(object):
                 return resource
 
 
+@implementer(ISacrudResource)
 class ListResource(BaseResource):
 
     title = 'Alchemy view'
