@@ -1,3 +1,4 @@
+import imp
 import os
 
 import pytest
@@ -7,6 +8,10 @@ from sqlalchemy import create_engine
 from pyramid_sacrud import CONFIG_MODELS
 from sqlalchemy.orm import sessionmaker, scoped_session
 from pyramid.threadlocal import get_current_registry
+from sqlalchemy.ext.declarative import declarative_base
+
+imp.load_source('pyramid_sacrud_example', 'example/pyramid_sacrud_example.py')
+
 from pyramid_sacrud_example import (  # noqa
     Good,
     main,
@@ -15,7 +20,6 @@ from pyramid_sacrud_example import (  # noqa
     Group,
     models
 )
-from sqlalchemy.ext.declarative import declarative_base
 
 DIRNAME = os.path.dirname(__file__)
 DATABASE_FILE = os.path.join(DIRNAME, 'test.sqlite')
