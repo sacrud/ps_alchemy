@@ -1,2 +1,7 @@
 sqlalchemy
 pyramid_sacrud
+sacrud_deform
+peppercorn
+transaction
+zope.sqlalchemy
+paginate_sqlalchemy

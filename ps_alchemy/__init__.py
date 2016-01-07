@@ -5,10 +5,10 @@
 # Copyright © 2015 uralbash <root@uralbash.ru>
 #
 # Distributed under terms of the MIT license.
-from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from pyramid.events import ApplicationCreated
 from pyramid_sacrud import CONFIG_MODELS
 from pyramid_sacrud.resources import GroupResource
+from sqlalchemy.ext.declarative.api import DeclarativeMeta
 
 from .resources import ListResource
 

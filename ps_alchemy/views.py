@@ -2,18 +2,19 @@ import json
 import logging
 
 import deform
+import colander
 import peppercorn
+import sqlalchemy
 import transaction
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 from sacrud.common import pk_list_to_dict
 from pyramid.compat import escape
 from pyramid_sacrud import PYRAMID_SACRUD_VIEW
 from pyramid.renderers import render_to_response
 from sqlalchemy.orm.exc import NoResultFound
 from paginate_sqlalchemy import SqlalchemyOrmPage
-from pyramid_sacrud.common import preprocessing_value
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
-from pyramid_sacrud.exceptions import SacrudMessagedException
+from pyramid_sacrud.exceptions import SacrudException
 from pyramid_sacrud.localization import _ps
 
 from .paginator import get_paginator
@@ -25,11 +26,26 @@ from .resources import (
 )
 
 
+def preprocessing_value(key, value, form):
+    for groups in form.children:
+        for column in groups:
+            if column.name == key:
+                if not str(value).isdigit() and isinstance(
+                        column.typ,
+                        (colander.Int, colander.Integer,
+                         colander.Float, colander.Decimal)):
+                    value = sqlalchemy.sql.null()
+                elif value is colander.null:
+                    value = ""
+                return value
+
+
+@view_defaults(permission=PYRAMID_SACRUD_VIEW)
 class CRUD(object):
 
     def __init__(self, context, request):
-        self.request = request
         self.context = context
+        self.request = request
 
     def commit(self):
         try:
@@ -55,11 +71,13 @@ class CRUD(object):
         if hasattr(self.request, 'session'):
             self.request.session.flash([message, status])
 
+
+class Read(CRUD):
+
     @view_config(
         request_method='GET',
         context=ListResource,
         route_name=PYRAMID_SACRUD_VIEW,
-        permission=PYRAMID_SACRUD_VIEW
     )
     def list_view(self):
         rows = self.context.crud.read()
@@ -75,6 +93,9 @@ class CRUD(object):
         return render_to_response(
             self.context.renderer, params, request=self.request
         )
+
+
+class Create(CRUD):
 
     @view_config(
         request_method='GET',
@@ -126,7 +147,7 @@ class CRUD(object):
                     flash_action = 'created'
                 name = obj.__repr__()
                 self.context.dbsession.flush()
-            except SacrudMessagedException as e:
+            except SacrudException as e:
                 self.flash_message(e.message, status=e.status)
                 return get_reponse()
             except Exception as e:
@@ -144,12 +165,17 @@ class CRUD(object):
             return self.list_view_response()
         return get_reponse()
 
+
+class Delete(CRUD):
+
     @view_config(
         request_method='POST',
         context=DeleteResource,
         route_name=PYRAMID_SACRUD_VIEW
     )
     def delete_view(self):
+        if not hasattr(self.context, 'obj'):
+            raise HTTPNotFound
         self.context.dbsession.delete(self.context.obj)
         self.commit()
         self.flash_message(
@@ -176,7 +202,7 @@ class CRUD(object):
                 self.request.dbsession.delete(objects)
         except (NoResultFound, KeyError):
             raise HTTPNotFound
-        except SacrudMessagedException as e:
+        except SacrudException as e:
             self.flash_message(e.message, status=e.status)
         except Exception as e:
             transaction.abort()
