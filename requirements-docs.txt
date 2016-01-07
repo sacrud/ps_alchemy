@@ -1,2 +1,2 @@
-pyramid_sacrud
+pyramid_sacrud>=0.3.0
 itcase_sphinx_theme>=0.1.5
