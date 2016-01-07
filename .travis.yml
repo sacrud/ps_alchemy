@@ -24,6 +24,7 @@ python:
   - "3.5"
 
 script:
+  - pip install git+https://github.com/sacrud/pyramid_sacrud@resorces
   - python setup.py test
 
 after_success:
