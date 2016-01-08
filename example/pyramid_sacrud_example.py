@@ -1,10 +1,7 @@
 from sqlalchemy import Column, String, Boolean, Integer, Unicode, ForeignKey
 from pyramid.config import Configurator
-from pyramid_sacrud import PYRAMID_SACRUD_HOME
 from sqlalchemy.orm import backref, relationship, sessionmaker, scoped_session
 from pyramid.session import SignedCookieSessionFactory
-from pyramid.security import Allow, forget, remember
-from pyramid.httpexceptions import HTTPFound
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -20,7 +17,7 @@ class Tree(Base):
 
 class User(Base):
     __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, nullable=False)
     age = Column(Integer)
     name = Column(String(30), primary_key=True)
 
@@ -122,25 +119,6 @@ def add_fixtures(dbsession):
             dbsession.add(Good(name='Chevrolet Cavalier', group=group))
             dbsession.add(Good(name='LADA Granta', group=group))
     dbsession.commit()
-
-
-class Root(object):
-    __acl__ = [(Allow, 'admin', PYRAMID_SACRUD_HOME), ]
-
-    def __init__(self, request):
-        self.request = request
-
-
-def login(request):
-    headers = remember(request, 'admin')
-    return HTTPFound(location=request.route_url(PYRAMID_SACRUD_HOME),
-                     headers=headers)
-
-
-def logout(request):
-    headers = forget(request)
-    return HTTPFound(location=request.route_url(PYRAMID_SACRUD_HOME),
-                     headers=headers)
 
 
 def main(global_settings, **settings):

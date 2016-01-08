@@ -34,7 +34,6 @@ def includeme(config):
 
     config.include('pyramid_jinja2')
     config.add_jinja2_search_path("templates")
-    config.add_static_view('/static', 'ps_alchemy:static')
     config.scan('.views')
 
     # deform

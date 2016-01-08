@@ -1,3 +1,4 @@
+recursive-include ps_alchemy/templates *.jinja2
 include requirements.txt
 include requirements-test.txt
 include README.rst

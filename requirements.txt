@@ -1,5 +1,5 @@
 sqlalchemy
-pyramid_sacrud==0.3.0
+pyramid_sacrud==0.3.0.post0
 sacrud_deform==0.1.4
 peppercorn
 transaction
