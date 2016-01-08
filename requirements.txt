@@ -1,6 +1,6 @@
 sqlalchemy
-pyramid_sacrud==0.3.0.post0
-sacrud_deform==0.1.4
+sacrud_deform>=0.1.4
+pyramid_sacrud>=0.3.0
 peppercorn
 transaction
 zope.sqlalchemy

@@ -34,7 +34,7 @@ class PyTest(TestCommand):
 
 setup(
     name='ps_alchemy',
-    version='0.0.2',
+    version='0.0.3',
     url='http://github.com/sacrud/ps_alchemy/',
     author='Svintsov Dmitry',
     author_email='sacrud@uralbash.ru',
