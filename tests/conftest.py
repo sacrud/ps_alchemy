@@ -5,7 +5,7 @@ import pytest
 from pyramid import testing
 from webtest import TestApp
 from sqlalchemy import create_engine
-from pyramid_sacrud import CONFIG_MODELS
+from pyramid_sacrud import CONFIG_RESOURCES
 from sqlalchemy.orm import sessionmaker, scoped_session
 from pyramid.threadlocal import get_current_registry
 from sqlalchemy.ext.declarative import declarative_base
@@ -68,7 +68,7 @@ def unit(request):
     response.setUp()
     response.request = testing.DummyRequest()
     response.config = testing.setUp(request=response.request)
-    get_current_registry().settings[CONFIG_MODELS] = models
+    get_current_registry().settings[CONFIG_RESOURCES] = models
     get_current_registry().settings['sqlalchemy.url'] =\
         TEST_DATABASE_CONNECTION_STRING
 

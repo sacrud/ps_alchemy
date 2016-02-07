@@ -6,8 +6,7 @@
 #
 # Distributed under terms of the MIT license.
 from pyramid.events import ApplicationCreated
-from pyramid_sacrud import CONFIG_MODELS
-from pyramid_sacrud.resources import GroupResource
+from pyramid_sacrud.routes import resources_preparing_factory
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
 
 from .resources import ListResource
@@ -16,17 +15,13 @@ from .resources import ListResource
 def models_preparing(app):
     """ Wrap all sqlalchemy model in settings.
     """
-    settings = app.app.registry.settings
-    models = settings[CONFIG_MODELS]
 
     def wrapper(resource, parent):
         if isinstance(resource, DeclarativeMeta):
             return ListResource(resource, parent=parent)
         return resource
 
-    models = [(k, [wrapper(r, GroupResource(k, v)) for r in v])
-              for k, v in models]
-    settings[CONFIG_MODELS] = models
+    resources_preparing_factory(app, wrapper)
 
 
 def includeme(config):
