@@ -1,2 +1,3 @@
 pyramid
 ps_alchemy
+pyramid-debugtoolbar
