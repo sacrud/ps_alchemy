@@ -11,14 +11,14 @@ Provide SQLAlchemy resource for pyramid_sacrud.
 """
 from zope.interface import implementer
 from zope.sqlalchemy import ZopeTransactionExtension
+from pyramid.location import lineage
+from pyramid.threadlocal import get_current_registry
 
 import sqlalchemy
 from sacrud.action import CRUD
 from sacrud.common import pk_to_list, pk_list_to_dict, get_attrname_by_colname
 from sacrud_deform import SacrudForm
 from sqlalchemy.orm import sessionmaker, scoped_session
-from pyramid.location import lineage
-from pyramid.threadlocal import get_current_registry
 from pyramid_sacrud.interfaces import ISacrudResource
 
 
@@ -66,7 +66,7 @@ class BaseResource(object):
         return (Column(col) for col in columns)
 
     @classmethod
-    def get_pk(cls, obj, json=True):
+    def get_id(cls, obj, json=True):
         return pk_to_list(obj, json)
 
     @property
@@ -84,11 +84,11 @@ class BaseResource(object):
     @property
     def _default_dbsession(self):
         engine = sqlalchemy.engine_from_config(get_current_registry().settings)
-        DBSession = scoped_session(
+        session = scoped_session(
             sessionmaker(extension=ZopeTransactionExtension())
         )
-        DBSession.configure(bind=engine)
-        return DBSession
+        session.configure(bind=engine)
+        return session
 
     @property
     def crud(self):

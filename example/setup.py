@@ -11,12 +11,12 @@ def read(name):
         return f.read()
 
 setup(
-    name='pyramid_sacrud_example',
+    name='ps_alchemy_example',
     version=version,
-    py_modules=['pyramid_sacrud_example'],
+    py_modules=['ps_alchemy_example'],
     install_requires=read('requirements.txt'),
     entry_points="""
 [paste.app_factory]
-main = pyramid_sacrud_example:main
+main = ps_alchemy_example:main
     """,
 )
