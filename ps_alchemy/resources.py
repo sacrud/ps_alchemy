@@ -27,24 +27,19 @@ class BaseResource(object):
     breadcrumb = True
 
     def __init__(
-            self, table, parent=None, dbsession=None, name=None, **kwargs
+            self, table, dbsession=None, name=None, **kwargs
     ):
         self.table = table
         self.kwargs = kwargs
-        self.parent = parent
         self._dbsession = dbsession
         self.__name__ = name or getattr(self, '__name__', None)
 
     @property
-    def table_name(self):
-        return self.table.__tablename__
-
-    @property
     def verbose_name(self):
-        return getattr(self.table, 'verbose_name', self.table_name)
+        return getattr(self.table, 'verbose_name', self.table.__tablename__)
 
     @property
-    def visible_columns(self):
+    def _columns(self):
         columns = getattr(self.table, 'sacrud_list_col',
                           self.table.__table__.c)
 
@@ -63,15 +58,29 @@ class BaseResource(object):
                 return getattr(self.column.info, 'verbose_name',
                                self.column.name)
 
-        return (Column(col) for col in columns)
+        return list(Column(col) for col in columns)
 
     @classmethod
-    def get_id(cls, obj, json=True):
+    def _get_id(cls, obj, json=True):
         return pk_to_list(obj, json)
 
     @property
-    def __parent__(self):
-        return self.parent
+    def ps_crud(self):
+        mass_action = MassActionResource(self.table, self.dbsession)
+        mass_action.__parent__ = self
+        create = self.get_create_resource()
+        update = self.get_update_resource
+        delete = self.get_delete_resource
+        return {
+            "get_id": self._get_id,
+            "columns": self._columns,
+            "crud": {
+                "mass_action": mass_action,
+                "create": create,
+                "update": update,
+                "delete": delete,
+            }
+        }
 
     @property
     def dbsession(self):
@@ -91,7 +100,7 @@ class BaseResource(object):
         return session
 
     @property
-    def crud(self):
+    def sacrud(self):
         return CRUD(self.dbsession, self.table, commit=False)
 
     def get_list_resource(self, resource):
@@ -100,11 +109,13 @@ class BaseResource(object):
                 return context
 
     def get_create_resource(self):
-        return CreateResource(self.table, self, self.dbsession)
+        resource = CreateResource(self.table, self.dbsession)
+        resource.__parent__ = self
+        return resource
 
     def get_update_resource(self, obj=None):
-        resource = UpdateResource(
-            self.table, parent=self, dbsession=self.dbsession)
+        resource = UpdateResource(self.table, dbsession=self.dbsession)
+        resource.__parent__ = self
         if obj:
             pk = pk_to_list(obj)
             for key in pk:
@@ -112,18 +123,13 @@ class BaseResource(object):
         return resource
 
     def get_delete_resource(self, obj=None):
-        resource = DeleteResource(
-            self.table, parent=self.get_list_resource(self),
-            dbsession=self.dbsession
-        )
+        resource = DeleteResource(self.table, dbsession=self.dbsession)
+        resource.__parent__ = self.get_list_resource(self)
         if obj:
             pk = pk_to_list(obj)
             for key in pk:
                 resource = resource[str(key)]
         return resource
-
-    def get_mass_action_resource(self):
-        return MassActionResource(self.table, self, self.dbsession)
 
     @property
     def left_sibling_breadcrumb(self):
@@ -202,13 +208,16 @@ class PrimaryKeyResource(BaseResource):
         primary_key.append(name)
         pk_len = len(self.table.__table__.primary_key) * 2
         if len(primary_key) < pk_len:
-            return self.__class__(self.table, self, self.dbsession, name)
+            resource = self.__class__(self.table, self.dbsession, name)
+            resource.__parent__ = self
+            return resource
         elif len(primary_key) == pk_len:
             try:
-                obj = self.crud.read(pk_list_to_dict(primary_key)).one()
+                obj = self.sacrud.read(pk_list_to_dict(primary_key)).one()
             except sqlalchemy.orm.exc.NoResultFound:
                 return None
             resource.obj = obj
+            resource.__parent__ = self
             return resource
 
 
@@ -217,7 +226,7 @@ class UpdateResource(PrimaryKeyResource):
     __name__ = 'update'
 
     def __getitem__(self, name):
-        resource = CreateResource(self.table, self, self.dbsession, name)
+        resource = CreateResource(self.table, self.dbsession, name)
         return self._getitem(resource, name)
 
 
@@ -226,7 +235,7 @@ class DeleteResource(PrimaryKeyResource):
     __name__ = 'delete'
 
     def __getitem__(self, name):
-        resource = DeleteResource(self.table, self, self.dbsession, name)
+        resource = DeleteResource(self.table, self.dbsession, name)
         return self._getitem(resource, name)
 
 
@@ -237,7 +246,7 @@ class MassActionResource(BaseResource):
 
     def __getitem__(self, name):
         if name == 'delete':
-            return MassDeleteResource(self.table, self, self.dbsession, name)
+            return MassDeleteResource(self.table, self.dbsession, name)
 
 
 class MassDeleteResource(BaseResource):

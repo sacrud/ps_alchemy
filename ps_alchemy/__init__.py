@@ -27,6 +27,7 @@ def models_preparing(app):
 def includeme(config):
     config.add_subscriber(models_preparing, ApplicationCreated)
 
+    config.include('ps_crud')
     config.include('pyramid_jinja2')
     config.add_jinja2_search_path("templates")
     config.scan('.views')
