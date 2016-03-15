@@ -66,11 +66,10 @@ class BaseResource(object):
 
     @property
     def ps_crud(self):
-        mass_action = MassActionResource(self.table, self.dbsession)
-        mass_action.__parent__ = self
-        create = self.get_create_resource()
         update = self.get_update_resource
         delete = self.get_delete_resource
+        create = self.get_create_resource()
+        mass_action = self.get_mass_action_resource()
         return {
             "get_id": self._get_id,
             "columns": self._columns,
@@ -103,6 +102,11 @@ class BaseResource(object):
     def sacrud(self):
         return CRUD(self.dbsession, self.table, commit=False)
 
+    def get_mass_action_resource(self):
+        resource = MassActionResource(self.table, self.dbsession)
+        resource.__parent__ = self
+        return resource
+
     def get_list_resource(self, resource):
         for context in lineage(resource):
             if isinstance(context, ListResource):
@@ -130,12 +134,6 @@ class BaseResource(object):
             for key in pk:
                 resource = resource[str(key)]
         return resource
-
-    @property
-    def left_sibling_breadcrumb(self):
-        for resource in lineage(self):
-            if resource.breadcrumb and resource is not self:
-                return resource
 
 
 @implementer(ISacrudResource)
@@ -246,7 +244,9 @@ class MassActionResource(BaseResource):
 
     def __getitem__(self, name):
         if name == 'delete':
-            return MassDeleteResource(self.table, self.dbsession, name)
+            resource = MassDeleteResource(self.table, self.dbsession, name)
+            resource.__parent__ = self
+            return resource
 
 
 class MassDeleteResource(BaseResource):

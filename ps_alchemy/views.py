@@ -63,7 +63,7 @@ class CRUD(object):
         return HTTPFound(
             location='/' + self.request.sacrud_prefix + '/' +
             self.request.resource_path(
-                self.context.left_sibling_breadcrumb
+                self.context.get_list_resource(self.context)
             )
         )
 

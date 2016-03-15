@@ -11,7 +11,7 @@ ps_post_url=ps_base_url + request.resource_path(context) %}
 {% set
 ps_delete_url=ps_base_url + request.resource_path(ps_crud["delete"](context.obj)) %}
 {% set
-ps_list_url=ps_base_url + request.resource_path(context.left_sibling_breadcrumb) %}
+ps_list_url=ps_base_url + request.resource_path(context.get_list_resource(context)) %}
 
 {% block title %}
 - {{ request.matched_route.name.split('_')[-1] }} {{ _(context.verbose_name) }}
