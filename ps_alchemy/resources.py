@@ -240,16 +240,3 @@ class DeleteResource(PrimaryKeyResource):
 class MassActionResource(BaseResource):
 
     __name__ = 'mass_action'
-    breadcrumb = False
-
-    def __getitem__(self, name):
-        if name == 'delete':
-            resource = MassDeleteResource(self.table, self.dbsession, name)
-            resource.__parent__ = self
-            return resource
-
-
-class MassDeleteResource(BaseResource):
-
-    __name__ = 'delete'
-    breadcrumb = False

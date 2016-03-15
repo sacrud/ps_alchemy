@@ -22,7 +22,7 @@ from .resources import (
     ListResource,
     CreateResource,
     DeleteResource,
-    MassDeleteResource
+    MassActionResource
 )
 
 
@@ -185,7 +185,8 @@ class Delete(CRUD):
 
     @view_config(
         request_method='POST',
-        context=MassDeleteResource,
+        context=MassActionResource,
+        request_param='mass_action=delete',
         route_name=PYRAMID_SACRUD_VIEW
     )
     def mass_delete_view(self):
