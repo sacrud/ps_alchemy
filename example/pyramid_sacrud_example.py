@@ -1,7 +1,18 @@
-from sqlalchemy import Column, String, Boolean, Integer, Unicode, ForeignKey
+import datetime
+
 from pyramid.config import Configurator
-from sqlalchemy.orm import backref, relationship, sessionmaker, scoped_session
 from pyramid.session import SignedCookieSessionFactory
+
+from sqlalchemy import (
+    Column,
+    String,
+    Boolean,
+    Integer,
+    Unicode,
+    DateTime,
+    ForeignKey
+)
+from sqlalchemy.orm import backref, relationship, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -13,6 +24,10 @@ class Tree(Base):
 
     id = Column(Integer, primary_key=True)
     parent_id = Column(Integer, ForeignKey("tree.id", ondelete="CASCADE"))
+    date_added = Column(
+        DateTime(timezone=True),
+        default=datetime.datetime.now()
+    )
 
 
 class User(Base):
