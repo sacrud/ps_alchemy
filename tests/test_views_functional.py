@@ -205,9 +205,11 @@ class TestDelete:
         deleted_ids = range(11, 25)
         items_list = [u'["id", %s, "name", "some user %s"]' % (id, id)
                       for id in deleted_ids]
-        functional.app.post('/admin/auth/user/mass_action/delete/',
-                            {'selected_item': items_list},
-                            status=302)
+        functional.app.post(
+            '/admin/auth/user/mass_action/',
+            {'selected_item': items_list, 'mass_action': 'delete'},
+            status=302
+        )
         count = functional.dbsession.query(User).filter(
             User.id.in_(deleted_ids)
         ).count()
@@ -227,9 +229,11 @@ class TestDelete:
 
         deleted_ids = (1, 3, 4)
         items_list = [u'["id", %s]' % id for id in deleted_ids]
-        functional.app.post('/admin/foo/tree/mass_action/delete/',
-                            {'selected_item': items_list},
-                            status=302)
+        functional.app.post(
+            '/admin/foo/tree/mass_action/',
+            {'selected_item': items_list, 'mass_action': 'delete'},
+            status=302
+        )
         objects = [x.id for x in functional.dbsession.query(Tree).all()]
         assert 1 not in objects
         assert 2 in objects

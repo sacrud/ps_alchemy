@@ -22,7 +22,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from .conftest import User
 
-imp.load_source('pyramid_sacrud_example', 'example/pyramid_sacrud_example.py')
+imp.load_source('pyramid_sacrud_example', 'example/ps_alchemy_example.py')
 
 from pyramid_sacrud_example import add_fixtures  # noqa
 

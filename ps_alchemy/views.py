@@ -22,7 +22,7 @@ from .resources import (
     ListResource,
     CreateResource,
     DeleteResource,
-    MassDeleteResource
+    MassActionResource
 )
 
 
@@ -63,7 +63,7 @@ class CRUD(object):
         return HTTPFound(
             location='/' + self.request.sacrud_prefix + '/' +
             self.request.resource_path(
-                self.context.left_sibling_breadcrumb
+                self.context.get_list_resource(self.context)
             )
         )
 
@@ -80,7 +80,7 @@ class Read(CRUD):
         route_name=PYRAMID_SACRUD_VIEW,
     )
     def list_view(self):
-        rows = self.context.crud.read()
+        rows = self.context.sacrud.read()
         try:
             paginator_attr = get_paginator(
                 self.request, self.context.items_per_page - 1
@@ -140,10 +140,10 @@ class Create(CRUD):
             # Update object
             try:
                 if self.context.obj:
-                    obj = self.context.crud._add(self.context.obj, data)
+                    obj = self.context.sacrud._add(self.context.obj, data)
                     flash_action = 'updated'
                 else:
-                    obj = self.context.crud.create(data)
+                    obj = self.context.sacrud.create(data)
                     flash_action = 'created'
                 name = obj.__repr__()
                 self.context.dbsession.flush()
@@ -185,14 +185,15 @@ class Delete(CRUD):
 
     @view_config(
         request_method='POST',
-        context=MassDeleteResource,
+        context=MassActionResource,
+        request_param='mass_action=delete',
         route_name=PYRAMID_SACRUD_VIEW
     )
     def mass_delete_view(self):
         items_list = self.request.POST.getall('selected_item')
         primary_keys = [pk_list_to_dict(json.loads(item))
                         for item in items_list]
-        objects = self.context.crud.read(*primary_keys)
+        objects = self.context.sacrud.read(*primary_keys)
         try:
             if hasattr(objects, 'delete'):
                 object_names = [escape(x.__repr__() or '') for x in objects]

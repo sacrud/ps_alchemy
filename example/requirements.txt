@@ -1,2 +1,4 @@
 pyramid
+waitress
 ps_alchemy
+pyramid-debugtoolbar

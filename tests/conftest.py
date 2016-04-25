@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from pyramid.threadlocal import get_current_registry
 from sqlalchemy.ext.declarative import declarative_base
 
-imp.load_source('pyramid_sacrud_example', 'example/pyramid_sacrud_example.py')
+imp.load_source('pyramid_sacrud_example', 'example/ps_alchemy_example.py')
 
 from pyramid_sacrud_example import (  # noqa
     Good,
