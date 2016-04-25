@@ -64,3 +64,17 @@ ps_list_url=ps_base_url + request.resource_path(context.get_list_resource(contex
     </div>
   </form>
 {% endblock %}
+
+{% block js %}
+  {{ super() }}
+  <script type="text/javascript"
+    src="{{ request.static_url('deform:static/scripts/jquery-2.0.3.min.js') }}"></script>
+  <script type="text/javascript"
+    src="{{ request.static_url('deform:static/pickadate/picker.js') }}"></script>
+  <script type="text/javascript"
+    src="{{ request.static_url('deform:static/pickadate/picker.date.js') }}"></script>
+  <script type="text/javascript"
+    src="{{ request.static_url('deform:static/pickadate/picker.time.js') }}"></script>
+  <script type="text/javascript"
+    src="{{ request.static_url('deform:static/scripts/deform.js') }}"></script>
+{% endblock %}
