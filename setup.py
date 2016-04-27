@@ -2,7 +2,7 @@ import os
 import sys
 
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
+from setuptools.command.test import test as TestCommand  # noqa
 
 this = os.path.dirname(os.path.realpath(__file__))
 
@@ -34,7 +34,7 @@ class PyTest(TestCommand):
 
 setup(
     name='ps_alchemy',
-    version='0.0.5',
+    version='0.0.6',
     url='http://github.com/sacrud/ps_alchemy/',
     author='Svintsov Dmitry',
     author_email='sacrud@uralbash.ru',
@@ -55,10 +55,8 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
