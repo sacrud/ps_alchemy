@@ -140,14 +140,27 @@ class BaseResource(object):
 class ListResource(BaseResource):
 
     title = 'Alchemy view'
-    items_per_page = 5
     renderer = '/ps_alchemy/crud/list.jinja2'
 
-    def __init__(self, table, parent=None, dbsession=None):
+    def __init__(self, table, dbsession=None):
         self.__name__ = table.__tablename__
         super(ListResource, self).__init__(
-            table, parent=parent, dbsession=dbsession
+            table, dbsession=dbsession
         )
+
+    @property
+    def items_per_page(self):
+        default = 5
+
+        if not getattr(self, '__parent__', True):
+            registry = get_current_registry()
+            return int(
+                registry.settings.get(
+                    'ps_alchemy.items_per_page',
+                    default
+                )
+            )
+        return default
 
     def __getitem__(self, name):
         if name == 'create':
@@ -240,3 +253,4 @@ class DeleteResource(PrimaryKeyResource):
 class MassActionResource(BaseResource):
 
     __name__ = 'mass_action'
+

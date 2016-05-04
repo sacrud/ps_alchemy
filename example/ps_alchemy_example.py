@@ -13,6 +13,7 @@ from sqlalchemy import (
     ForeignKey
 )
 from sqlalchemy.orm import backref, relationship, sessionmaker, scoped_session
+from ps_alchemy.resources import ListResource
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -93,8 +94,12 @@ class GroupName(object):
         return self.name
 
 
+class GoodResource(ListResource):
+
+    items_per_page = 3
+
 models = (
-    ('Catalouge', [Group, Good]),
+    ('Catalouge', [Group, GoodResource(Good)]),
     (GroupName('Auth system', 'auth'), [User]),
     ('', []),
     ('foo', [Parent, Child, Tree])

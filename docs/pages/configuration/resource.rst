@@ -1,6 +1,42 @@
 Resource
 ========
 
+Items per page
+--------------
+
+Global value is set in the settings:
+
+.. code-block:: ini
+    :emphasize-lines: 7
+
+    [app:main]
+    use = egg:ps_alchemy_example
+    pyramid.includes = pyramid_debugtoolbar
+    pyramid.reload_templates = true
+
+    sqlalchemy.url = sqlite:///example.sqlite
+    ps_alchemy.items_per_page = 6
+
+The value can also be set individually specific resource. This is
+achieved by overriding attribute ``items_per_page``.
+
+.. code-block:: python
+    :emphasize-lines: 5
+
+    from ps_alchemy.resources import ListResource
+
+    class GoodResource(ListResource):
+
+        items_per_page = 30
+
+    ...
+    # add pyramid_sacrud and project models
+    settings = config.registry.settings
+    settings['pyramid_sacrud.models'] = (
+        ('Group1', [Model1, GoodResource(Model2)]),
+        ('Group2', [Model3])
+    )
+
 ..
 .. Model verbose name
 .. ~~~~~~~~~~~~~~~~~~

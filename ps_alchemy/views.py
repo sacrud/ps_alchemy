@@ -83,7 +83,7 @@ class Read(CRUD):
         rows = self.context.sacrud.read()
         try:
             paginator_attr = get_paginator(
-                self.request, self.context.items_per_page - 1
+                self.request, self.context.items_per_page
             )
         except ValueError:
             raise HTTPNotFound
