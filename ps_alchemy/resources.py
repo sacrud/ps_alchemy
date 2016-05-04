@@ -150,17 +150,11 @@ class ListResource(BaseResource):
 
     @property
     def items_per_page(self):
-        default = 5
-
-        if not getattr(self, '__parent__', True):
-            registry = get_current_registry()
-            return int(
-                registry.settings.get(
-                    'ps_alchemy.items_per_page',
-                    default
-                )
+        return int(
+            get_current_registry().settings.get(
+                'ps_alchemy.items_per_page', 5
             )
-        return default
+        )
 
     def __getitem__(self, name):
         if name == 'create':
