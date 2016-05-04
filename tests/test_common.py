@@ -34,8 +34,6 @@ def test_preprocessing_value():
     )
     value = {'foo': 'bar'}
     assert preprocessing_value("foo", value, form.schema) == value
-
-    assert preprocessing_value("foo", "говядо", form.schema) == "говядо"
     assert preprocessing_value("foo", u"говядо", form.schema) == "говядо"
     assert preprocessing_value(
         "foo",
