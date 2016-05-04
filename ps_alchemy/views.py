@@ -8,7 +8,7 @@ import sqlalchemy
 import transaction
 from pyramid.view import view_config, view_defaults
 from sacrud.common import pk_list_to_dict
-from pyramid.compat import escape
+from pyramid.compat import escape, text_type
 from pyramid_sacrud import PYRAMID_SACRUD_VIEW
 from pyramid.renderers import render_to_response
 from sqlalchemy.orm.exc import NoResultFound
@@ -30,7 +30,7 @@ def preprocessing_value(key, value, form):
     for groups in form.children:
         for column in groups:
             if column.name == key:
-                if not str(value).isdigit() and isinstance(
+                if not text_type(value).isdigit() and isinstance(
                         column.typ,
                         (colander.Int, colander.Integer,
                          colander.Float, colander.Decimal)):
@@ -180,7 +180,7 @@ class Delete(CRUD):
         self.commit()
         self.flash_message(
             _ps("You have removed object of ${name}",
-                mapping={'name': escape(str(self.context.obj) or '')}))
+                mapping={'name': escape(text_type(self.context.obj) or '')}))
         return self.list_view_response()
 
     @view_config(
