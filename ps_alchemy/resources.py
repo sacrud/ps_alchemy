@@ -31,7 +31,7 @@ class BaseResource(object):
     ):
         self.table = table
         self.kwargs = kwargs
-        self._dbsession = dbsession
+        self._dbsession = dbsession or self._default_dbsession
         self.__name__ = name or getattr(self, '__name__', None)
 
     @property
@@ -83,7 +83,7 @@ class BaseResource(object):
 
     @property
     def dbsession(self):
-        return self._dbsession or self._default_dbsession
+        return self._dbsession
 
     @dbsession.setter
     def dbsession(self, dbsession):
