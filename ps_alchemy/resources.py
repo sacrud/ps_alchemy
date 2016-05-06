@@ -83,7 +83,9 @@ class BaseResource(object):
 
     @property
     def dbsession(self):
-        return self._dbsession or self._default_dbsession
+        if not self._dbsession:
+            self._dbsession = self._default_dbsession
+        return self._dbsession
 
     @dbsession.setter
     def dbsession(self, dbsession):
@@ -91,7 +93,8 @@ class BaseResource(object):
 
     @property
     def _default_dbsession(self):
-        engine = sqlalchemy.engine_from_config(get_current_registry().settings)
+        registry = get_current_registry()
+        engine = sqlalchemy.engine_from_config(registry.settings)
         session = scoped_session(
             sessionmaker(extension=ZopeTransactionExtension())
         )
@@ -247,4 +250,3 @@ class DeleteResource(PrimaryKeyResource):
 class MassActionResource(BaseResource):
 
     __name__ = 'mass_action'
-
