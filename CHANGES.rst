@@ -1,9 +1,10 @@
-0.0.7 (2016-05-??)
+0.0.7 (2016-05-07)
 ==================
 
 - fix UnicodeDecode error (see #6 #7)
 - added ``items_per_page`` option to settings (issue
   sacrud/pyramid_sacrud#120)
+- fix infinite database connections (issue sacrud/pyramid_sacrud#121)
 
 0.0.6 (2016-04-27)
 ==================
