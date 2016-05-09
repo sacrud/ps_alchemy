@@ -30,11 +30,14 @@ def preprocessing_value(key, value, form):
     for groups in form.children:
         for column in groups:
             if column.name == key:
-                if not text_type(value).isdigit() and isinstance(
-                        column.typ,
-                        (colander.Int, colander.Integer,
-                         colander.Float, colander.Decimal)):
-                    value = sqlalchemy.sql.null()
+                if isinstance(column.typ, (colander.Int,
+                                           colander.Integer,
+                                           colander.Float,
+                                           colander.Decimal)):
+                    try:
+                        float(text_type(value))
+                    except ValueError:
+                        value = sqlalchemy.sql.null()
                 elif value is colander.null:
                     value = ""
                 return value
