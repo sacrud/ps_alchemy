@@ -30,10 +30,7 @@ def preprocessing_value(key, value, form):
     for groups in form.children:
         for column in groups:
             if column.name == key:
-                if isinstance(column.typ, (colander.Int,
-                                           colander.Integer,
-                                           colander.Float,
-                                           colander.Decimal)):
+                if isinstance(column.typ, colander.Number):
                     try:
                         float(text_type(value))
                     except ValueError:
