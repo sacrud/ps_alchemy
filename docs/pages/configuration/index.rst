@@ -8,3 +8,4 @@ Configuration
   localization.rst
   template.rst
   resource.rst
+  models.rst
