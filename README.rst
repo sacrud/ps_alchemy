@@ -1,10 +1,11 @@
-|Build Status| |Coverage Status| |PyPI|
+|Build Status| |Coverage Status|
 
 ps_alchemy
 ==========
 
 `ps_alchemy` is extension for `pyramid_sacrud
-<https://github.com/sacrud/pyramid_sacrud/>`_ which provides SQLAlchemy models.
+<https://github.com/sacrud/pyramid_sacrud/>`_ which provides SQLAlchemy
+models.
 
 Look how easy it is to use:
 
@@ -46,6 +47,3 @@ The project is licensed under the MIT license.
    :target: https://travis-ci.org/sacrud/ps_alchemy
 .. |Coverage Status| image:: https://coveralls.io/repos/sacrud/ps_alchemy/badge.png?branch=master
    :target: https://coveralls.io/r/sacrud/ps_alchemy?branch=master
-.. |PyPI| image:: http://img.shields.io/pypi/dm/ps_alchemy.svg
-   :target: https://pypi.python.org/pypi/ps_alchemy/
-
