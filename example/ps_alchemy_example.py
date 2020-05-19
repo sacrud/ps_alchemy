@@ -10,7 +10,8 @@ from sqlalchemy import (
     Integer,
     Unicode,
     DateTime,
-    ForeignKey
+    ForeignKey,
+    Numeric
 )
 from sqlalchemy.orm import backref, relationship, sessionmaker, scoped_session
 from ps_alchemy.resources import ListResource
@@ -62,6 +63,10 @@ class Good(Base):
 
     visible = Column(Boolean, default=False)
     archive = Column(Boolean)
+    archive = Column(Boolean)
+
+    latitude = Column(Numeric, nullable=False)
+    longitude = Column(Numeric, nullable=False)
 
     def __repr__(self):
         return self.name
@@ -128,16 +133,16 @@ def add_fixtures(dbsession):
         group = Group(name=group_name)
         dbsession.add(group)
         if group_name == 'Electronics':
-            dbsession.add(Good(name='iPhone', group=group))
-            dbsession.add(Good(name='Fridge', group=group))
-            dbsession.add(Good(name='YotaPhone', group=group))
+            dbsession.add(Good(name='iPhone', group=group, latitude=5.0, longitude=4.2))
+            dbsession.add(Good(name='Fridge', group=group, latitude=0, longitude=1.1))
+            dbsession.add(Good(name='YotaPhone', group=group, latitude=111, longitude=62.5))
         elif group_name == 'Fashion':
-            dbsession.add(Good(name='Jeans', group=group))
+            dbsession.add(Good(name='Jeans', group=group, latitude=111, longitude=111))
         elif group_name == 'Home & Garden':
-            dbsession.add(Good(name='Rake', group=group))
+            dbsession.add(Good(name='Rake', group=group, latitude=5.0, longitude=5.0))
         elif group_name == 'Motors':
-            dbsession.add(Good(name='Chevrolet Cavalier', group=group))
-            dbsession.add(Good(name='LADA Granta', group=group))
+            dbsession.add(Good(name='Chevrolet Cavalier', group=group, latitude=1.1, longitude=1.2))
+            dbsession.add(Good(name='LADA Granta', group=group, latitude=111, longitude=222))
     dbsession.commit()
 
 

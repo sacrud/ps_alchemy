@@ -10,11 +10,7 @@
 Provide SQLAlchemy resource for pyramid_sacrud.
 """
 from zope.interface import implementer
-
-try:
-    from zope.sqlalchemy import ZopeTransactionEvents
-except ImportError:
-    from zope.sqlalchemy import ZopeTransactionExtension as ZopeTransactionEvents
+from zope.sqlalchemy import register
 
 from pyramid.location import lineage
 from pyramid.threadlocal import get_current_registry
@@ -100,10 +96,8 @@ class BaseResource(object):
     def _default_dbsession(self):
         registry = get_current_registry()
         engine = sqlalchemy.engine_from_config(registry.settings)
-        session = scoped_session(
-            sessionmaker(extension=ZopeTransactionEvents())
-        )
-        session.configure(bind=engine)
+        session = scoped_session(sessionmaker(bind=engine))
+        register(session)
         return session
 
     @property
